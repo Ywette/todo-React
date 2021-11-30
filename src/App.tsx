@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
 import "./App.scss";
+import TodoList from "./components/TodoList";
 
 const App = () => {
-  const [taskList, setTaskList]=useState();
-  
-  const addTaskToList =(e: )=>{
-    console.log(e)
-
-  }
+ 
 
 
   return (
     <div>
-      <input type="text" onClick={(e) => setTaskList(e.target.value)}/>
+     <h1>todo list</h1>
+     <TodoList />
     </div>
   );
 };
