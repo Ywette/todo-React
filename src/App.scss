@@ -1,18 +1,14 @@
-.links {
+.todo {
+  width: 500px;
+}
+.todo__form {
+  justify-content: center;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  min-height: 100px;
-  background: rgb(101, 113, 117);
-  color: white;
 }
-.link {
-  text-decoration: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  text-transform: uppercase;
-}
-.link:visited,
-.link:active {
-  color: black;
+
+.todo__list {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
 }

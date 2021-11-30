@@ -15,10 +15,15 @@ const TodoList = () => {
       console.log(taskList);
     }
   };
+  const deleteTask = (i: number) => {
+    let filtered = taskList.filter((task, index) => index !== i);
+    setTaskList([...filtered]);
+    console.log(filtered);
+  };
 
   return (
-    <div>
-      <form>
+    <div className="todo">
+      <form className="todo__form">
         <input
           placeholder="Add a task..."
           type="text"
@@ -33,13 +38,14 @@ const TodoList = () => {
         >
           add a task
         </button>
+        <button>Filter checked</button>
       </form>
       <ul>
         {taskList.map((task, i) => {
           return (
-            <li key={i}>
+            <li className="todo__list" key={i}>
               {task}
-              <FaTrashAlt />
+              <FaTrashAlt onClick={() => deleteTask(i)} />
             </li>
           );
         })}
