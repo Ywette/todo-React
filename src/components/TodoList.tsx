@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaRegCheckCircle } from "react-icons/fa";
 
 const TodoList = () => {
   const [task, setTask] = useState("");
@@ -15,11 +15,15 @@ const TodoList = () => {
       console.log(taskList);
     }
   };
+
   const deleteTask = (i: number) => {
     let filtered = taskList.filter((task, index) => index !== i);
     setTaskList([...filtered]);
     console.log(filtered);
   };
+
+  
+  
 
   return (
     <div className="todo">
@@ -45,6 +49,7 @@ const TodoList = () => {
           return (
             <li className="todo__list" key={i}>
               {task}
+              <FaRegCheckCircle onClick={()=> checkIfDone(i)}/>
               <FaTrashAlt onClick={() => deleteTask(i)} />
             </li>
           );
