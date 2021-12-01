@@ -6,9 +6,15 @@
   display: flex;
 }
 
-.todo__list {
+.todo__listWrapper {
   width: 100%;
   display: flex;
   justify-content: space-between;
   padding: 8px;
+  position: relative;
+  z-index: 1;
+}
+.todo_checkIcon {
+}
+.todo__trachIcon {
 }
