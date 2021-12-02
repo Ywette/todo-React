@@ -71,8 +71,6 @@ const TodoList = () => {
     setTaskList(updatedTodos);
     setEditText("");
     setEditIndex(-1);
-    console.log(taskList);
-    console.log(editText);
   };
 
   return (
