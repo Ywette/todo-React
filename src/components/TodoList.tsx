@@ -41,7 +41,6 @@ const TodoList = () => {
         },
       ]);
       setTask("");
-      console.log(taskList);
     }
   };
 
