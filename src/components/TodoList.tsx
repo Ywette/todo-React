@@ -31,17 +31,23 @@ const TodoList = () => {
   };
 
   const deleteTask = (i: number) => {
-    let filtered = taskList.filter((task, index) => index !== i);
-    console.log(filtered);
-
+    const filtered = taskList.filter((task, index) => index !== i);
     setTaskList([...filtered]);
-    console.log(filtered);
   };
 
   const checkIfDone = (index: number) => {
     const editedTask = [...taskList];
     taskList[index].completed = !taskList[index].completed;
     setTaskList(editedTask);
+  };
+
+  const toggleDone = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    // alert("bubuu");
+    const editedList = [...taskList].filter((task) => task.completed);
+
+    setTaskList(editedList);
+    console.log("editedList");
   };
 
   return (
@@ -61,7 +67,7 @@ const TodoList = () => {
         >
           add a task
         </button>
-        <button>Filter checked</button>
+        <button onClick={toggleDone}>Filter checked</button>
       </form>
       <ul>
         {taskList.map((task, i) => {
