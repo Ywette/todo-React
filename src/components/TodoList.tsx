@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { FaTrashAlt, FaRegCheckCircle } from "react-icons/fa";
+
 type Task = {
   text: string;
   completed: boolean;
 };
+
+const getLocalStorage = () => {
+  let list = localStorage.getItem("list");
+  if (list) {
+    return (list = JSON.parse(localStorage.getItem("list") || ""));
+  } else {
+    return [];
+  }
+};
 const TodoList = () => {
   const [task, setTask] = useState("");
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useState<Task[]>(getLocalStorage());
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [editText, setEditText] = useState<string>("");
 
-  // useEffect(() => {
-  //   const temp = localStorage.getItem("todos");
-  //   const loadedTodos = JSON.parse(temp);
-
-  //   if (loadedTodos) {
-  //     setTaskList(loadedTodos);
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   const localStorageList = JSON.stringify(taskList);
-  //   localStorage.setItem("todos", localStorageList);
-  // }, [taskList]);
+  useEffect(() => {
+    localStorage.setItem("list", JSON.stringify(taskList));
+    console.log(taskList);
+  }, [taskList]);
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
