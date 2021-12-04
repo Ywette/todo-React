@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaTrashAlt, FaRegCheckCircle } from "react-icons/fa";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 type Task = {
   text: string;
@@ -17,12 +18,12 @@ const getLocalStorage = () => {
 const TodoList = () => {
   const [task, setTask] = useState("");
   const [taskList, setTaskList] = useState<Task[]>(getLocalStorage());
+
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [editText, setEditText] = useState<string>("");
 
   useEffect(() => {
     localStorage.setItem("list", JSON.stringify(taskList));
-    console.log(taskList);
   }, [taskList]);
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,6 +76,15 @@ const TodoList = () => {
     setEditIndex(-1);
   };
 
+  const progress = (): number => {
+    const progressDone = taskList.filter((doneTask) => doneTask.completed);
+    // console.log(progressDone.length);
+    // console.log(taskList.length);
+    return parseInt(
+      `${Math.round((progressDone.length * 100) / taskList.length)}`
+    );
+  };
+
   return (
     <div className="todo">
       <form className="todo__form">
@@ -95,6 +105,7 @@ const TodoList = () => {
         <button onClick={toggleDone}>Filter checked</button>
       </form>
       <span>Progress bar</span>
+      <ProgressBar completed={progress()} />
       <ul>
         {taskList.map((task, i) => {
           return (
