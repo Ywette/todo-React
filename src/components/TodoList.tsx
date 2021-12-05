@@ -17,21 +17,23 @@ const getLocalStorage = () => {
   }
 };
 
+const deadlineTags = ["today", "this week", "this month"];
+
 const TodoList = () => {
   const [task, setTask] = useState("");
   const [taskList, setTaskList] = useState<Task[]>(getLocalStorage());
-  const [tags, setTags] = useState(["today", "this week", "this month"]); // can be separate variable
+  const [tags, setTags] = useState(""); // can be separate variable
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [editText, setEditText] = useState<string>("");
   const [actions, setActions] = useState(false);
-  const [actionByTag, setActioByTag] = useState("");
+  // const [actionByTag, setActioByTag] = useState("");
 
   useEffect(() => {
     localStorage.setItem("list", JSON.stringify(taskList));
   }, [taskList]);
 
   const returnTodayTasks = () => {
-    setActioByTag("today");
+    setTags(tags);
   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -71,27 +73,24 @@ const TodoList = () => {
     setTaskList(editedTask);
   };
 
-  const toggleDone = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const editedList = [...taskList].filter((task) => task.completed);
-    setTaskList(editedList);
+  const toggleDone = () => {
     setActions(true);
   };
 
   const addTag = (tag: string) => {
     console.log(tag);
-    setActioByTag(tag);
+    setTags(tag);
   };
 
   const editTodo = (i: number) => {
     const updatedTodos = [...taskList].map((taskListItem, index) => {
       if (index === i && editText !== "") {
         taskListItem.text = editText;
-        taskListItem.tag = actionByTag;
+        taskListItem.tag = tags;
       }
       return taskListItem;
     });
-    console.log(updatedTodos);
+
     setTaskList(updatedTodos);
     setEditText("");
     setEditIndex(-1);
@@ -112,8 +111,6 @@ const TodoList = () => {
   const newArr = taskList.filter((listItem) => {
     if (actions) {
       return listItem.completed;
-    } else if (actionByTag === "today") {
-      return listItem.tag === "today";
     } else {
       return true;
     }
@@ -137,28 +134,21 @@ const TodoList = () => {
           add a task
         </button>
       </form>
-      <button onClick={toggleDone}>Filter checked</button>
+
+      {actions ? (
+        <button onClick={returnData}>Show all tasks</button>
+      ) : (
+        <button onClick={toggleDone}>Filter checked</button>
+      )}
       <button onClick={clearAll}>Clear</button>
-      <button onClick={returnData}>Get all tasks</button>
+
       <div className="deadline">
         <span>filter by deadline</span>
         <button onClick={returnTodayTasks}>Today</button>
-        {/* <button onClick={returnData}>Get all tasks</button>
-      <button onClick={returnData}>Get all tasks</button> */}
-
-        {/* {tags.map((tag, index) => {
-          return (
-            // <button
-            //   key={tag}
-            //   onClick={
-            //     filterByTag
-            //   }
-            // >
-            //   {tag}
-            // </button>
-          );
-        })} */}
+        <button onClick={returnTodayTasks}>This week</button>
+        <button onClick={returnTodayTasks}>This month</button>
       </div>
+
       <span>your progress</span>
       {taskList.length > 0 && <ProgressBar completed={progress()} />}
 
@@ -176,7 +166,7 @@ const TodoList = () => {
                       setEditText(e.target.value);
                     }}
                   />
-                  {tags.map((tag) => {
+                  {deadlineTags.map((tag) => {
                     return (
                       <span
                         key={tag}
