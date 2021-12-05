@@ -1,5 +1,8 @@
-.todo {
-  width: 500px;
+.app {
+  padding: 0 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .todo__form {
   justify-content: center;
@@ -22,4 +25,24 @@
   width: 150px;
   height: 75px;
   background-color: gray;
+}
+.tag {
+  padding: 8px;
+  // background-color: gray;
+  // margin-right: 4px;
+}
+.deadline {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  border-radius: 4px;
+  background-color: lightblue;
+  padding: 2px 6px;
+  margin: 0 4px;
+}
+.input {
+  border: none;
+  outline: none;
+  padding-left: 4px;
+  height: 100%;
 }
