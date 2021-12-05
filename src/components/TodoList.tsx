@@ -32,10 +32,6 @@ const TodoList = () => {
     localStorage.setItem("list", JSON.stringify(taskList));
   }, [taskList]);
 
-  const returnTodayTasks = () => {
-    setTags(tags);
-  };
-
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -80,20 +76,29 @@ const TodoList = () => {
   const addTag = (tag: string) => {
     console.log(tag);
     setTags(tag);
+    const addedTag = [...taskList].map((task, item) => {
+      console.log(task);
+    });
   };
 
   const editTodo = (i: number) => {
     const updatedTodos = [...taskList].map((taskListItem, index) => {
-      if (index === i && editText !== "") {
+      if (index === i || editText !== "") {
         taskListItem.text = editText;
         taskListItem.tag = tags;
       }
+      console.log("from edit taskITem ", taskListItem);
       return taskListItem;
     });
 
     setTaskList(updatedTodos);
     setEditText("");
     setEditIndex(-1);
+  };
+
+  const returnDeadline = () => {
+    //filter by tag
+    console.log(taskList);
   };
 
   const returnData = () => {
@@ -144,9 +149,9 @@ const TodoList = () => {
 
       <div className="deadline">
         <span>filter by deadline</span>
-        <button onClick={returnTodayTasks}>Today</button>
-        <button onClick={returnTodayTasks}>This week</button>
-        <button onClick={returnTodayTasks}>This month</button>
+        <button onClick={returnDeadline}>Today</button>
+        <button onClick={returnDeadline}>This week</button>
+        <button onClick={returnDeadline}>This month</button>
       </div>
 
       <span>your progress</span>
