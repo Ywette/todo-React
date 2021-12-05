@@ -5,6 +5,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 type Task = {
   text: string;
   completed: boolean;
+  tag: string;
 };
 
 const getLocalStorage = () => {
@@ -15,16 +16,23 @@ const getLocalStorage = () => {
     return [];
   }
 };
+
 const TodoList = () => {
   const [task, setTask] = useState("");
   const [taskList, setTaskList] = useState<Task[]>(getLocalStorage());
-
+  const [tags, setTags] = useState(["today", "this week", "this month"]); // can be separate variable
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [editText, setEditText] = useState<string>("");
+  const [actions, setActions] = useState(false);
+  const [actionByTag, setActioByTag] = useState("");
 
   useEffect(() => {
     localStorage.setItem("list", JSON.stringify(taskList));
   }, [taskList]);
+
+  const returnTodayTasks = () => {
+    setActioByTag("today");
+  };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -41,10 +49,15 @@ const TodoList = () => {
         {
           text: task,
           completed: false,
+          tag: "",
         },
       ]);
       setTask("");
     }
+  };
+
+  const clearAll = () => {
+    setTaskList([]);
   };
 
   const deleteTask = (i: number) => {
@@ -62,28 +75,49 @@ const TodoList = () => {
     e.preventDefault();
     const editedList = [...taskList].filter((task) => task.completed);
     setTaskList(editedList);
+    setActions(true);
+  };
+
+  const addTag = (tag: string) => {
+    console.log(tag);
+    setActioByTag(tag);
   };
 
   const editTodo = (i: number) => {
     const updatedTodos = [...taskList].map((taskListItem, index) => {
-      if (index === i) {
+      if (index === i && editText !== "") {
         taskListItem.text = editText;
+        taskListItem.tag = actionByTag;
       }
       return taskListItem;
     });
+    console.log(updatedTodos);
     setTaskList(updatedTodos);
     setEditText("");
     setEditIndex(-1);
   };
 
+  const returnData = () => {
+    setActions(false);
+  };
+
   const progress = (): number => {
     const progressDone = taskList.filter((doneTask) => doneTask.completed);
-    // console.log(progressDone.length);
-    // console.log(taskList.length);
+
     return parseInt(
       `${Math.round((progressDone.length * 100) / taskList.length)}`
     );
   };
+
+  const newArr = taskList.filter((listItem) => {
+    if (actions) {
+      return listItem.completed;
+    } else if (actionByTag === "today") {
+      return listItem.tag === "today";
+    } else {
+      return true;
+    }
+  });
 
   return (
     <div className="todo">
@@ -102,21 +136,58 @@ const TodoList = () => {
         >
           add a task
         </button>
-        <button onClick={toggleDone}>Filter checked</button>
       </form>
-      <span>Progress bar</span>
-      <ProgressBar completed={progress()} />
+      <button onClick={toggleDone}>Filter checked</button>
+      <button onClick={clearAll}>Clear</button>
+      <button onClick={returnData}>Get all tasks</button>
+      <div className="deadline">
+        <span>filter by deadline</span>
+        <button onClick={returnTodayTasks}>Today</button>
+        {/* <button onClick={returnData}>Get all tasks</button>
+      <button onClick={returnData}>Get all tasks</button> */}
+
+        {/* {tags.map((tag, index) => {
+          return (
+            // <button
+            //   key={tag}
+            //   onClick={
+            //     filterByTag
+            //   }
+            // >
+            //   {tag}
+            // </button>
+          );
+        })} */}
+      </div>
+      <span>your progress</span>
+      {taskList.length > 0 && <ProgressBar completed={progress()} />}
+
       <ul>
-        {taskList.map((task, i) => {
+        {newArr.map((task, i) => {
           return (
             <div key={i} className="todo__listWrapper">
               {editIndex === i ? (
-                <input
-                  type=" text"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setEditText(e.target.value)
-                  }
-                />
+                <div className="input-style">
+                  <input
+                    className="input"
+                    placeholder="edit task..."
+                    type=" text"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setEditText(e.target.value);
+                    }}
+                  />
+                  {tags.map((tag) => {
+                    return (
+                      <span
+                        key={tag}
+                        className="tag"
+                        onClick={() => addTag(tag)}
+                      >
+                        {tag}
+                      </span>
+                    );
+                  })}
+                </div>
               ) : (
                 <li className="todo__list">{task.text}</li>
               )}
@@ -148,6 +219,3 @@ const TodoList = () => {
 };
 
 export default TodoList;
-function setTodoEditing(i: number): void {
-  throw new Error("Function not implemented.");
-}
