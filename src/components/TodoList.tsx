@@ -74,31 +74,28 @@ const TodoList = () => {
   };
 
   const addTag = (tag: string) => {
-    console.log(tag);
     setTags(tag);
-    const addedTag = [...taskList].map((task, item) => {
-      console.log(task);
-    });
   };
 
   const editTodo = (i: number) => {
     const updatedTodos = [...taskList].map((taskListItem, index) => {
-      if (index === i || editText !== "") {
+      if (index === i && editText !== "") {
         taskListItem.text = editText;
         taskListItem.tag = tags;
       }
-      console.log("from edit taskITem ", taskListItem);
       return taskListItem;
     });
 
     setTaskList(updatedTodos);
     setEditText("");
     setEditIndex(-1);
+    console.log(taskList);
   };
 
-  const returnDeadline = () => {
-    //filter by tag
-    console.log(taskList);
+  const returnDeadline = (tag: string) => {
+    //style buttons
+    
+    const deadlineTasks = [...taskList].filter((task) => tag === task.tag);
   };
 
   const returnData = () => {
@@ -107,7 +104,6 @@ const TodoList = () => {
 
   const progress = (): number => {
     const progressDone = taskList.filter((doneTask) => doneTask.completed);
-
     return parseInt(
       `${Math.round((progressDone.length * 100) / taskList.length)}`
     );
@@ -149,9 +145,18 @@ const TodoList = () => {
 
       <div className="deadline">
         <span>filter by deadline</span>
-        <button onClick={returnDeadline}>Today</button>
-        <button onClick={returnDeadline}>This week</button>
-        <button onClick={returnDeadline}>This month</button>
+        {deadlineTags.map((tag, index) => {
+          return (
+            <button
+              key={index}
+              onClick={() => returnDeadline(tag)}
+              style={{ backgroundColor: "#EFEFEF" }}
+            >
+              {tag}
+            </button>
+          );
+        })}
+        <button onClick={returnData}>see all tasks</button>
       </div>
 
       <span>your progress</span>
