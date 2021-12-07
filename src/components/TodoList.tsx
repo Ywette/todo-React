@@ -26,7 +26,6 @@ const TodoList = () => {
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [editText, setEditText] = useState<string>("");
   const [actions, setActions] = useState(false);
-  // const [actionByTag, setActioByTag] = useState("");
 
   useEffect(() => {
     localStorage.setItem("list", JSON.stringify(taskList));
@@ -63,11 +62,11 @@ const TodoList = () => {
     setTaskList([...filtered]);
   };
 
-  const checkIfDone = (index: number) => {
+ const checkIfDone = (index: number) => {
     const editedTask = [...taskList];
     taskList[index].completed = !taskList[index].completed;
     setTaskList(editedTask);
-  };
+  }; 
 
   const toggleDone = () => {
     setActions(true);
