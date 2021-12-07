@@ -62,11 +62,11 @@ const TodoList = () => {
     setTaskList([...filtered]);
   };
 
- const checkIfDone = (index: number) => {
+  const checkIfDone = (index: number) => {
     const editedTask = [...taskList];
     taskList[index].completed = !taskList[index].completed;
     setTaskList(editedTask);
-  }; 
+  };
 
   const toggleDone = () => {
     setActions(true);
@@ -93,8 +93,9 @@ const TodoList = () => {
 
   const returnDeadline = (tag: string) => {
     //style buttons
-    
+
     const deadlineTasks = [...taskList].filter((task) => tag === task.tag);
+    setTaskList(deadlineTasks);
   };
 
   const returnData = () => {
@@ -107,13 +108,14 @@ const TodoList = () => {
       `${Math.round((progressDone.length * 100) / taskList.length)}`
     );
   };
-
+  //not finished
   const newArr = taskList.filter((listItem) => {
     if (actions) {
       return listItem.completed;
-    } else {
-      return true;
+    } else if (listItem.tag === "today") {
+      return listItem.tag;
     }
+    return true;
   });
 
   return (
