@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { FaTrashAlt, FaRegCheckCircle } from "react-icons/fa";
 import ProgressBar from "@ramonak/react-progress-bar";
+import FilterBar from "./FilterBar";
+import { TaskProps } from '../interfaces';
 
-type Task = {
-  text: string;
-  completed: boolean;
-  tag: string;
-};
 
 const getLocalStorage = () => {
   let list = localStorage.getItem("list");
@@ -17,15 +14,21 @@ const getLocalStorage = () => {
   }
 };
 
-const deadlineTags = ["today", "this week", "this month"];
+const deadline = ["checked", "today", "this week", "this month"];
 
 const TodoList = () => {
+  const [taskList, setTaskList] = useState<TaskProps[]>(getLocalStorage());
+
   const [task, setTask] = useState("");
-  const [taskList, setTaskList] = useState<Task[]>(getLocalStorage());
+
   const [tags, setTags] = useState(""); // can be separate variable
+
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [editText, setEditText] = useState<string>("");
   const [actions, setActions] = useState(false);
+
+  const [checkedTaskList, setCheckedTaskList] = useState();
+
 
   useEffect(() => {
     localStorage.setItem("list", JSON.stringify(taskList));
@@ -37,10 +40,7 @@ const TodoList = () => {
     if (task === "") {
       alert("please write a task");
     } else {
-      const newTask = {
-        text: task,
-        completed: false,
-      };
+
       setTaskList([
         ...taskList,
         {
@@ -68,8 +68,17 @@ const TodoList = () => {
     setTaskList(editedTask);
   };
 
+  // const addDeadlineTag = (index: number, tad: string)=>{
+  //   const editedTask = [...taskList];
+  //   setTaskList()
+  // }
+
   const toggleDone = () => {
     setActions(true);
+  };
+
+  const returnData = () => {
+    setActions(false);
   };
 
   const addTag = (tag: string) => {
@@ -98,10 +107,6 @@ const TodoList = () => {
     setTaskList(deadlineTasks);
   };
 
-  const returnData = () => {
-    setActions(false);
-  };
-
   const progress = (): number => {
     const progressDone = taskList.filter((doneTask) => doneTask.completed);
     return parseInt(
@@ -112,8 +117,9 @@ const TodoList = () => {
   const newArr = taskList.filter((listItem) => {
     if (actions) {
       return listItem.completed;
-    } else if (listItem.tag === "today") {
-      return listItem.tag;
+    }
+    if (tags === "today"){
+      return listItem.tag
     }
     return true;
   });
@@ -137,16 +143,19 @@ const TodoList = () => {
         </button>
       </form>
 
+      <FilterBar deadlineTags={deadline} />
+
       {actions ? (
         <button onClick={returnData}>Show all tasks</button>
       ) : (
         <button onClick={toggleDone}>Filter checked</button>
       )}
+
       <button onClick={clearAll}>Clear</button>
 
       <div className="deadline">
         <span>filter by deadline</span>
-        {deadlineTags.map((tag, index) => {
+        {deadline.map((tag, index) => {
           return (
             <button
               key={index}
@@ -177,7 +186,7 @@ const TodoList = () => {
                       setEditText(e.target.value);
                     }}
                   />
-                  {deadlineTags.map((tag) => {
+                  {deadline.map((tag) => {
                     return (
                       <span
                         key={tag}
@@ -193,7 +202,7 @@ const TodoList = () => {
                 <li className="todo__list">{task.text}</li>
               )}
               {editIndex === i ? (
-                <button onClick={() => editTodo(i)}>Submit editted task</button>
+                <button onClick={() => editTodo(i)}>Submit edited task</button>
               ) : (
                 <button onClick={() => setEditIndex(i)}>Edit task</button>
               )}
