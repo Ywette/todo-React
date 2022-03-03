@@ -17,10 +17,11 @@
   position: relative;
   z-index: 1;
 }
-.todo_checkIcon {
+
+.taskItem-wrapper {
+  padding: 5px;
 }
-.todo__trachIcon {
-}
+
 .button {
   background-color: gray;
   outline: none;
@@ -38,7 +39,6 @@
 .deadline {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
   border-radius: 4px;
   background-color: lightblue;
   padding: 2px 6px;

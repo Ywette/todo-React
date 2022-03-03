@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FaTrashAlt, FaRegCheckCircle } from "react-icons/fa";
+import { FaTrashAlt, FaRegCheckCircle, FaRegEdit } from "react-icons/fa";
 import ProgressBar from "@ramonak/react-progress-bar";
 import FilterBar from "./FilterBar";
 import { ListItemProp } from '../interfaces';
 import Button from '../components/Button'
-
+import TaskInputForm from "./TaskInputForm";
 
 const getLocalStorage = () => {
     let list = localStorage.getItem("list");
@@ -17,40 +17,18 @@ const getLocalStorage = () => {
 
 const deadline = ["today", "this week", "this month"];
 
-const TodoList = () => {
+const Planner = () => {
     const [taskList, setTaskList] = useState<ListItemProp[]>(getLocalStorage());
-
-    const [taskInput, setTaskInput] = useState("");
-
-    const [tags, setTags] = useState(""); // can be separate variable
+    const [showAddTaskForm, setShowAddTaskForm] = useState(false)
 
     const [editIndex, setEditIndex] = useState<number>(-1);
     const [editText, setEditText] = useState<string>("");
     const [actions, setActions] = useState(false);
 
-    const [checkedTaskList, setCheckedTaskList] = useState();
-
-
     useEffect(() => {
         localStorage.setItem("list", JSON.stringify(taskList));
+        console.log(taskList);
     }, [taskList]);
-
-    const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-
-        if (taskInput === "") {
-            alert("please write a task");
-        } else {
-            const newTask: ListItemProp = {
-                text: taskInput,
-                completed: false,
-                deadline: ""
-            }
-            setTaskList([...taskList, newTask])
-            setTaskInput('')
-            console.log(taskList)
-        }
-    };
 
     const clearAll = () => {
         setTaskList([]);
@@ -61,16 +39,11 @@ const TodoList = () => {
         setTaskList([...filtered]);
     };
 
-    // const checkIfDone = (index: number) => {
-    //     const editedTask = [...taskList];
-    //     taskList[index].completed = !taskList[index].completed;
-    //     setTaskList(editedTask);
-    // };
-
-    // const addDeadlineTag = (index: number, tad: string)=>{
-    //   const editedTask = [...taskList];
-    //   setTaskList()
-    // }
+    const checkIfDone = (index: number) => {
+        const editedTask = [...taskList];
+        taskList[index].completed = !taskList[index].completed;
+        setTaskList(editedTask);
+    };
 
     const toggleDone = () => {
         setActions(true);
@@ -80,24 +53,19 @@ const TodoList = () => {
         setActions(false);
     };
 
-    const addTag = (tag: string) => {
-        setTags(tag);
-    };
-
-    const editTodo = (i: number) => {
-        const updatedTodos = [...taskList].map((taskListItem, index) => {
-            if (index === i && editText !== "") {
-                taskListItem.text = editText;
-                taskListItem.deadline = tags;
-            }
-            return taskListItem;
-        });
-
-        setTaskList(updatedTodos);
-        setEditText("");
-        setEditIndex(-1);
-        console.log(taskList);
-    };
+    // const editTodo = (i: number) => {
+    //     const updatedTodos = [...taskList].map((taskListItem, index) => {
+    //         if (index === i && editText !== "") {
+    //             taskListItem.text = editText;
+    //             taskListItem.deadline = tags;
+    //         }
+    //         return taskListItem;
+    //     });
+    //
+    //     setTaskList(updatedTodos);
+    //     setEditText("");
+    //     setEditIndex(-1);
+    // };
 
     const returnDeadline = (tag: string) => {
         //style buttons
@@ -114,49 +82,38 @@ const TodoList = () => {
     };
     //not finished
 
-    const newArr = taskList.filter((listItem) => {
-        if (actions) {
-            return listItem.completed;
-        }
-        if (tags === "today"){
-            return listItem.deadline
-        }
-        return true;
-    });
+    // const newArr = taskList.filter((listItem) => {
+    //     if (actions) {
+    //         return listItem.completed;
+    //     }
+    //     if (tags === "today"){
+    //         return listItem.deadline
+    //     }
+    //     return true;
+    // });
+
+    const dataFromForm = (taskInputs: ListItemProp) => {
+        setTaskList([...taskList, taskInputs]);
+        setShowAddTaskForm(false);
+    }
 
     return (
         <div className="todo">
-            <form className="todo__form">
-                <input
-                    placeholder="Add a task..."
-                    type="text"
-                    value={taskInput}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setTaskInput(e.target.value)
-                    }
-                />
+            <Button
+                className=""
+                type="button"
+                value="Add the Next Task"
+                onClick={()=> setShowAddTaskForm(!showAddTaskForm)}
+            />
+            <div style={{display:`${showAddTaskForm ? "flex" : 'none'}`}}>
+                <TaskInputForm
+                    addTaskToList={(taskInputs: ListItemProp)=>dataFromForm(taskInputs)}
+                /> 
+            </div>
+            
 
-                {/*<Button*/}
-                {/*    type="button"*/}
-                {/*    className="button"*/}
-                {/*    value="add a task"*/}
-                {/*    onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e)}*/}
-                {/*/>*/}
-                {taskInput ?
-                    <div>
-                        <button
-                            type="submit"
-                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e)}
-                        >
-                            add a task
-                        </button>
-                    </div>
-                    : null
-                }
-
-            </form>
             <button onClick={clearAll}>clear all</button>
-            <FilterBar deadlineTags={deadline} />
+            {/*<FilterBar deadlineTags={deadline} />*/}
 
             {/*{actions ? (*/}
             {/*    <button onClick={returnData}>Show all tasks</button>*/}
@@ -185,22 +142,28 @@ const TodoList = () => {
             {/*<span>your progress</span>*/}
             {/*{taskList.length > 0 && <ProgressBar completed={progress()} />}*/}
 
-            <ul>
                 {taskList.map((listItem, index) => {
                     return (
-                            <li key={index}>
+                            <div className="taskItem-wrapper" key={index}>
                                 {listItem.text}
-
+                                <FaRegEdit />
+                                <FaRegCheckCircle
+                                    onClick={() => checkIfDone(index)}
+                                    style={{
+                                        backgroundColor: `${
+                                            listItem.completed ? "green" : "transparent"
+                                        }`
+                                    }}
+                                />
                                 <FaTrashAlt
                                     className="todo__trachIcon"
                                     onClick={() => deleteTask(index)}
                                 />
-                            </li>
+                            </div>
                         )
                 })}
-            </ul>
         </div>
     );
 };
 
-export default TodoList;
+export default Planner;
