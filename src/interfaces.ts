@@ -7,12 +7,6 @@ export interface ButtonProps {
     key?: number,
     onClick?: ()=>void | undefined,
 }
-//delete when finish real planner
-export interface TaskProps {
-    text: string;
-    completed: boolean;
-    tag: string;
-};
 
 export interface ListItemProp {
     text: string;

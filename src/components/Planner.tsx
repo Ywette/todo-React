@@ -6,6 +6,7 @@ import { ListItemProp } from '../interfaces';
 import Button from '../components/Button'
 import TaskInputForm from "./TaskInputForm";
 
+
 const getLocalStorage = () => {
     let list = localStorage.getItem("list");
     if (list) {
@@ -15,11 +16,17 @@ const getLocalStorage = () => {
     }
 };
 
-const deadline = ["today", "this week", "this month"];
+const date = new Date();
+// const tomorrow = addDays(date, 1);
+
+console.log(date);
+
+const deadline = ["today", "tomorrow", "this week", "this month"];
 
 const Planner = () => {
     const [taskList, setTaskList] = useState<ListItemProp[]>(getLocalStorage());
-    const [showAddTaskForm, setShowAddTaskForm] = useState(false)
+    const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+    const [today, setToday] = useState(new Date());
 
     const [editIndex, setEditIndex] = useState<number>(-1);
     const [editText, setEditText] = useState<string>("");
@@ -82,12 +89,20 @@ const Planner = () => {
     };
     //not finished
 
-    // const newArr = taskList.filter((listItem) => {
-    //     if (actions) {
-    //         return listItem.completed;
+    // const toggleFilterToday = () => {
+    //     if(actions){
+    //         taskList.filter((listItem) => {
+    //                 return listItem.deadline === date;
+    //         })
     //     }
-    //     if (tags === "today"){
-    //         return listItem.deadline
+    //
+    //     console.log(date);
+    // }
+    // const toggleDeadlineToday = taskList.filter((listItem) => {
+    //     if (listItem.deadline === todayDate) {
+    //         return listItem.deadline === todayDate;
+    //     }else {
+    //          return listItem
     //     }
     //     return true;
     // });
@@ -95,6 +110,10 @@ const Planner = () => {
     const dataFromForm = (taskInputs: ListItemProp) => {
         setTaskList([...taskList, taskInputs]);
         setShowAddTaskForm(false);
+    }
+
+    const filterDeadline = (tag: string) => {
+        console.log(tag)
     }
 
     return (
@@ -110,10 +129,13 @@ const Planner = () => {
                     addTaskToList={(taskInputs: ListItemProp)=>dataFromForm(taskInputs)}
                 /> 
             </div>
-            
 
             <button onClick={clearAll}>clear all</button>
-            {/*<FilterBar deadlineTags={deadline} />*/}
+
+            <FilterBar
+                filterDeadline={(tag: string)=>filterDeadline(tag)}
+                deadlineTags={deadline}
+            />
 
             {/*{actions ? (*/}
             {/*    <button onClick={returnData}>Show all tasks</button>*/}
