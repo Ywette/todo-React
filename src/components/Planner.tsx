@@ -5,6 +5,7 @@ import FilterBar from "./FilterBar";
 import { ListItemProp } from '../interfaces';
 import Button from '../components/Button'
 import TaskInputForm from "./TaskInputForm";
+import {addDays, format, endOfWeek, endOfMonth} from 'date-fns';
 
 
 const getLocalStorage = () => {
@@ -16,17 +17,12 @@ const getLocalStorage = () => {
     }
 };
 
-const date = new Date();
-// const tomorrow = addDays(date, 1);
-
-console.log(date);
-
 const deadline = ["today", "tomorrow", "this week", "this month"];
 
 const Planner = () => {
     const [taskList, setTaskList] = useState<ListItemProp[]>(getLocalStorage());
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
-    const [today, setToday] = useState(new Date());
+    const [toggledFilter, setToggledFilter]=useState<ListItemProp[]>([]);
 
     const [editIndex, setEditIndex] = useState<number>(-1);
     const [editText, setEditText] = useState<string>("");
@@ -52,14 +48,6 @@ const Planner = () => {
         setTaskList(editedTask);
     };
 
-    const toggleDone = () => {
-        setActions(true);
-    };
-
-    const returnData = () => {
-        setActions(false);
-    };
-
     // const editTodo = (i: number) => {
     //     const updatedTodos = [...taskList].map((taskListItem, index) => {
     //         if (index === i && editText !== "") {
@@ -74,13 +62,6 @@ const Planner = () => {
     //     setEditIndex(-1);
     // };
 
-    const returnDeadline = (tag: string) => {
-        //style buttons
-
-        const deadlineTasks = [...taskList].filter((task) => tag === task.deadline);
-        setTaskList(deadlineTasks);
-    };
-
     const progress = (): number => {
         const progressDone = taskList.filter((doneTask) => doneTask.completed);
         return parseInt(
@@ -89,31 +70,44 @@ const Planner = () => {
     };
     //not finished
 
-    // const toggleFilterToday = () => {
-    //     if(actions){
-    //         taskList.filter((listItem) => {
-    //                 return listItem.deadline === date;
-    //         })
-    //     }
-    //
-    //     console.log(date);
-    // }
-    // const toggleDeadlineToday = taskList.filter((listItem) => {
-    //     if (listItem.deadline === todayDate) {
-    //         return listItem.deadline === todayDate;
-    //     }else {
-    //          return listItem
-    //     }
-    //     return true;
-    // });
-
     const dataFromForm = (taskInputs: ListItemProp) => {
         setTaskList([...taskList, taskInputs]);
         setShowAddTaskForm(false);
     }
 
     const filterDeadline = (tag: string) => {
-        console.log(tag)
+        // const deadLineDates = ['tomorrow', 'thisWeek', 'thisMonth']
+        const date = new Date();
+        const dateFormat = 'yyyy-MM-dd';
+        const todayFormatted = format(date, dateFormat);
+
+        const tomorrow = addDays(date, 1);
+        const tomorrowFormatted = format(tomorrow, dateFormat);
+
+        const thisWeek = endOfWeek(date, {weekStartsOn: 1});
+        const thisWeekFormatted = format(thisWeek, dateFormat);
+
+        const thisMonth = endOfMonth(date);
+        const thisMonthFormatted = format(thisMonth, dateFormat);
+
+        if (tag === 'tomorrow') {
+
+            const filteredDeadline = taskList.filter((task) => task.deadline === tomorrowFormatted);
+            setToggledFilter([...filteredDeadline]);
+            console.log(toggledFilter);
+
+        }else if(tag === 'this week'){
+
+            const filteredDeadline = taskList.filter((task) => task.deadline <= thisWeekFormatted);
+            setToggledFilter([...filteredDeadline]);
+            console.log(toggledFilter);
+
+        }else if(tag === 'this month'){
+
+            const filteredDeadline = taskList.filter((task) => task.deadline <= thisMonthFormatted);
+            setToggledFilter([...filteredDeadline]);
+            console.log(toggledFilter);
+        }
     }
 
     return (
@@ -137,27 +131,10 @@ const Planner = () => {
                 deadlineTags={deadline}
             />
 
-
-            {/*<div className="deadline">*/}
-            {/*    <span>filter by deadline</span>*/}
-            {/*    {deadline.map((tag, index) => {*/}
-            {/*        return (*/}
-            {/*            <button*/}
-            {/*                key={index}*/}
-            {/*                onClick={() => returnDeadline(tag)}*/}
-            {/*                style={{ backgroundColor: "#EFEFEF" }}*/}
-            {/*            >*/}
-            {/*                {tag}*/}
-            {/*            </button>*/}
-            {/*        );*/}
-            {/*    })}*/}
-            {/*    <button onClick={returnData}>see all tasks</button>*/}
-            {/*</div>*/}
-
             {/*<span>your progress</span>*/}
             {/*{taskList.length > 0 && <ProgressBar completed={progress()} />}*/}
 
-            {taskList.map((listItem, index) => {
+            {toggledFilter.map((listItem, index) => {
                 return (
                     <div className="taskItem-wrapper" key={index}>
                                 {listItem.text}
