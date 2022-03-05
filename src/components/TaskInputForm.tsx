@@ -31,10 +31,10 @@ const TaskInputForm = (props: any) => {
                 }
             />
 
-            {(taskInputs.text && taskInputs.deadline) ?
+            {/*{(taskInputs.text && taskInputs.deadline) ?*/}
                 <div>
                     <button
-                        type="submit"
+                        type="button"
                         onClick={(e)=>{
                             e.preventDefault();
                             props.addTaskToList(taskInputs);
@@ -42,8 +42,8 @@ const TaskInputForm = (props: any) => {
                     >add a task
                     </button>
                 </div>
-                : null
-            }
+            {/*    : null*/}
+            {/*}*/}
         </form>
     );
 };

@@ -2,7 +2,7 @@ import Button from "./Button";
 import './FilterBar.css'
 import {ButtonProps} from "../interfaces";
 
-const FilterBar = (props: any, { filterDeadline }: any) => {
+const FilterBar = (props: any) => {
     const deadlineTags = props.deadlineTags;
 
     return (
@@ -15,7 +15,9 @@ const FilterBar = (props: any, { filterDeadline }: any) => {
                         type="button"
                         className="button"
                         value={tag}
-                        onClick={()=> filterDeadline(tag)}
+                        onClick={()=> {
+                            props.filterDeadline(tag)
+                        }}
                     />
                 )
             })}

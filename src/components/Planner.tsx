@@ -137,13 +137,6 @@ const Planner = () => {
                 deadlineTags={deadline}
             />
 
-            {/*{actions ? (*/}
-            {/*    <button onClick={returnData}>Show all tasks</button>*/}
-            {/*) : (*/}
-            {/*    <button onClick={toggleDone}>Filter checked</button>*/}
-            {/*)}*/}
-
-            {/*<button onClick={clearAll}>Clear</button>*/}
 
             {/*<div className="deadline">*/}
             {/*    <span>filter by deadline</span>*/}
@@ -164,9 +157,9 @@ const Planner = () => {
             {/*<span>your progress</span>*/}
             {/*{taskList.length > 0 && <ProgressBar completed={progress()} />}*/}
 
-                {taskList.map((listItem, index) => {
-                    return (
-                            <div className="taskItem-wrapper" key={index}>
+            {taskList.map((listItem, index) => {
+                return (
+                    <div className="taskItem-wrapper" key={index}>
                                 {listItem.text}
                                 <FaRegEdit />
                                 <FaRegCheckCircle
