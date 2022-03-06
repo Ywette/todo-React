@@ -6,6 +6,7 @@ import { ListItemProp } from '../interfaces';
 import Button from '../components/Button'
 import TaskInputForm from "./TaskInputForm";
 import {addDays, format, endOfWeek, endOfMonth} from 'date-fns';
+import TaskList from "./TaskList";
 
 
 const getLocalStorage = () => {
@@ -17,7 +18,7 @@ const getLocalStorage = () => {
     }
 };
 
-const deadline = ["today", "tomorrow", "this week", "this month"];
+const deadline = ["done", "today", "tomorrow", "this week", "this month", "all"];
 
 const Planner = () => {
     const [taskList, setTaskList] = useState<ListItemProp[]>(getLocalStorage());
@@ -26,12 +27,6 @@ const Planner = () => {
 
     const [editIndex, setEditIndex] = useState<number>(-1);
     const [editText, setEditText] = useState<string>("");
-    const [actions, setActions] = useState(false);
-
-    useEffect(() => {
-        localStorage.setItem("list", JSON.stringify(taskList));
-        console.log(taskList);
-    }, [taskList]);
 
     const clearAll = () => {
         setTaskList([]);
@@ -49,15 +44,16 @@ const Planner = () => {
     };
 
     // const editTodo = (i: number) => {
-    //     const updatedTodos = [...taskList].map((taskListItem, index) => {
+    //     const updatedTodos = [...toggledFilter].map((task, index) => {
     //         if (index === i && editText !== "") {
-    //             taskListItem.text = editText;
-    //             taskListItem.deadline = tags;
+    //             task.text = editText,
+    //             task.deadline = tags,
+    //             task.completed = false,
     //         }
-    //         return taskListItem;
+    //         return task;
     //     });
     //
-    //     setTaskList(updatedTodos);
+    //     setTaskList([...taskList, updatedTodos]);
     //     setEditText("");
     //     setEditIndex(-1);
     // };
@@ -68,7 +64,6 @@ const Planner = () => {
             `${Math.round((progressDone.length * 100) / taskList.length)}`
         );
     };
-    //not finished
 
     const dataFromForm = (taskInputs: ListItemProp) => {
         setTaskList([...taskList, taskInputs]);
@@ -94,21 +89,33 @@ const Planner = () => {
 
             const filteredDeadline = taskList.filter((task) => task.deadline === tomorrowFormatted);
             setToggledFilter([...filteredDeadline]);
-            console.log(toggledFilter);
 
         }else if(tag === 'this week'){
 
             const filteredDeadline = taskList.filter((task) => task.deadline <= thisWeekFormatted);
             setToggledFilter([...filteredDeadline]);
-            console.log(toggledFilter);
 
         }else if(tag === 'this month'){
 
             const filteredDeadline = taskList.filter((task) => task.deadline <= thisMonthFormatted);
             setToggledFilter([...filteredDeadline]);
-            console.log(toggledFilter);
+        }else if(tag === 'today'){
+
+            const filteredDeadline = taskList.filter((task) => task.deadline <= todayFormatted);
+            setToggledFilter([...filteredDeadline]);
+        }else if(tag === 'done'){
+
+            const filteredDeadline = taskList.filter((task) => task.completed );
+            setToggledFilter([...filteredDeadline]);
+        }else if(tag === 'all'){
+            setToggledFilter([...taskList]);
         }
     }
+
+    useEffect(() => {
+        localStorage.setItem("list", JSON.stringify(taskList));
+        console.log(taskList);
+    }, [taskList]);
 
     return (
         <div className="todo">
@@ -118,6 +125,7 @@ const Planner = () => {
                 value="Add the Next Task"
                 onClick={()=> setShowAddTaskForm(!showAddTaskForm)}
             />
+
             <div style={{display:`${showAddTaskForm ? "flex" : 'none'}`}}>
                 <TaskInputForm
                     addTaskToList={(taskInputs: ListItemProp)=>dataFromForm(taskInputs)}
@@ -134,26 +142,10 @@ const Planner = () => {
             {/*<span>your progress</span>*/}
             {/*{taskList.length > 0 && <ProgressBar completed={progress()} />}*/}
 
-            {toggledFilter.map((listItem, index) => {
-                return (
-                    <div className="taskItem-wrapper" key={index}>
-                                {listItem.text}
-                                <FaRegEdit />
-                                <FaRegCheckCircle
-                                    onClick={() => checkIfDone(index)}
-                                    style={{
-                                        backgroundColor: `${
-                                            listItem.completed ? "green" : "transparent"
-                                        }`
-                                    }}
-                                />
-                                <FaTrashAlt
-                                    className="todo__trachIcon"
-                                    onClick={() => deleteTask(index)}
-                                />
-                            </div>
-                        )
-                })}
+            <TaskList
+                toggledFilter={toggledFilter}
+            />
+
         </div>
     );
 };
